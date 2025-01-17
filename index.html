@@ -1,14 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="shortcut icon" type="image/svg+xml/x-icon" href="/favicon.ico" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Website Metadata Fetcher</title>
-    </head>
-
-    <body>
-        <div id="root"></div>
-        <script type="module" src="/src/main.tsx"></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Metadata Fetcher</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Fetch and display metadata from any website URL with our easy-to-use tool." />
+    <meta name="keywords" content="metadata, website, URL, SEO, web tool" />
+    <meta name="author" content="Your Name or Company Name" />
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://metatester.vercel.app/" />
+    <meta property="og:title" content="Website Metadata Fetcher" />
+    <meta property="og:description" content="Fetch and display metadata from any website URL with our easy-to-use tool." />
+    <meta property="og:image" content="https://metatester.vercel.app/logo.png" />
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://metatester.vercel.app.com/" />
+    <meta name="twitter:title" content="Website Metadata Fetcher" />
+    <meta name="twitter:description" content="Fetch and display metadata from any website URL with our easy-to-use tool." />
+    <meta name="twitter:image" content="https://metatester.vercel.app/logo.png" />
+    
+    <!-- Other Meta Tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#ffffff" />
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="/src/index.css" as="style" />
+    <link rel="preload" href="/src/main.tsx" as="script" />
+    
+    <!-- Application Manifest -->
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
+
