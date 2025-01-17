@@ -3,6 +3,7 @@ import { debounce } from 'lodash'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Trash2 } from 'lucide-react'
 
 interface Metadata {
   title: string
@@ -14,10 +15,11 @@ interface Metadata {
 const API_URL = 'http://localhost:3001/fetch-metadata'
 
 const App: React.FC = () => {
-  const [url, setUrl] = useState('https://campoprime.com')
+  const [url, setUrl] = useState('https://example.com')
   const [metadata, setMetadata] = useState<Metadata | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [clearingCache, setClearingCache] = useState(false)
 
   const fetchMetadata = useCallback(async (urlToFetch: string) => {
     setLoading(true)
@@ -34,15 +36,33 @@ const App: React.FC = () => {
         throw new Error('Failed to fetch metadata')
       }
       const data = await response.json();
-      console.log(data)
       setMetadata(data)
     } catch (err) {
         console.error(`Failed to fetch metadata: ${err}`)
-      setError('Failed to fetch metadata. Please try again.')
+        setError('Failed to fetch metadata. Please try again.')
     } finally {
       setLoading(false)
     }
   }, [])
+
+  const clearCache = async () => {
+    setClearingCache(true)
+    try {
+      const response = await fetch('http://localhost:3001/clear-cache', {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to clear cache')
+      }
+      // Refetch current URL after clearing cache
+      await fetchMetadata(url)
+    } catch (err) {
+        console.error(`Failed to clear cache: ${err}`)
+      setError('Failed to clear cache. Please try again.')
+    } finally {
+      setClearingCache(false)
+    }
+  }
 
   const debouncedFetchMetadata = useCallback(
     debounce((url: string) => fetchMetadata(url), 300),
@@ -51,7 +71,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     fetchMetadata(url)
-  }, [url, fetchMetadata])
+  }, [url])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -91,7 +111,7 @@ const App: React.FC = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <Button
                   type="submit"
                   className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -105,6 +125,15 @@ const App: React.FC = () => {
                   className="ml-3 group relative w-1/3 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Clear
+                </Button>
+                <Button
+                  type="button"
+                  onClick={clearCache}
+                  variant="outline"
+                  disabled={clearingCache}
+                  title="Clear server cache"
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </form>

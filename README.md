@@ -16,11 +16,14 @@ The server will run on `http://localhost:3001`.
 
 ### API
 
-The backend exposes a single endpoint:
+The backend exposes two endpoints:
 
 - `POST /fetch-metadata`
   - Accepts a JSON object with a `url` field in the request body.
   - Returns a JSON object containing the metadata (title, description, image, favicon).
+- `DELETE /clear-cache`
+  - Clears the server's metadata cache.
+  - Returns a success message.
 
 ## Frontend
 
@@ -39,7 +42,8 @@ The frontend will be available at `http://localhost:5173` by default.
 1. Enter a valid URL in the input field.
 2. Click the "Fetch Metadata" button or press Enter to fetch the metadata.
 3. The metadata will be displayed in a card below the input field.
-4. Use the "Clear" button to reset the form and results.
+4. Use the "Clear" button to reset the form.
+5. Use the trash icon button to clear the server's cache and fetch fresh metadata.
 
 ## Dependencies
 
