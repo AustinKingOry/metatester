@@ -18,6 +18,25 @@ function validateUrl(url) {
   }
 }
 
+function resolveRelativeUrl(baseUrl, relativePath) {
+  try {
+    const base = new URL(baseUrl);
+    // Handle different types of relative paths
+    if (relativePath.startsWith('//')) {
+      return `${base.protocol}${relativePath}`;
+    }
+    if (relativePath.startsWith('/')) {
+      return `${base.protocol}//${base.host}${relativePath}`;
+    }
+    if (!relativePath.startsWith('http')) {
+      return new URL(relativePath, base.href).href;
+    }
+    return relativePath;
+  } catch (err) {
+    return relativePath;
+  }
+}
+
 async function fetchMetadata(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
@@ -36,12 +55,12 @@ async function fetchMetadata(url) {
                        $('meta[name="twitter:description"]').attr('content') || 
                        $('meta[name="description"]').attr('content') || 
                        'No description available',
-          image: $('meta[property="og:image"]').attr('content') || 
+          image: resolveRelativeUrl(url, $('meta[property="og:image"]').attr('content') || 
                  $('meta[name="twitter:image"]').attr('content') || 
-                 '',
-          favicon: $('link[rel="icon"]').attr('href') || 
+                 ''),
+          favicon: resolveRelativeUrl(url, $('link[rel="icon"]').attr('href') || 
                    $('link[rel="shortcut icon"]').attr('href') || 
-                   '/favicon.ico'
+                   '/favicon.ico')
         };
         resolve(metadata);
       });

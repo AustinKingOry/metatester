@@ -14,7 +14,7 @@ interface Metadata {
 const API_URL = 'http://localhost:3001/fetch-metadata'
 
 const App: React.FC = () => {
-  const [url, setUrl] = useState('https://example.com')
+  const [url, setUrl] = useState('https://campoprime.com')
   const [metadata, setMetadata] = useState<Metadata | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,9 +33,11 @@ const App: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch metadata')
       }
-      const data = await response.json()
+      const data = await response.json();
+      console.log(data)
       setMetadata(data)
     } catch (err) {
+        console.error(`Failed to fetch metadata: ${err}`)
       setError('Failed to fetch metadata. Please try again.')
     } finally {
       setLoading(false)
@@ -49,7 +51,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     fetchMetadata(url)
-  }, [])
+  }, [url, fetchMetadata])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
