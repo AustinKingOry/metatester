@@ -156,7 +156,7 @@ const App: React.FC = () => {
                   )}
                   <p className="mt-2 text-sm text-yellow-600">Note: If you are testing a site, try using the <code className="text-blue-600">www</code> prefix.</p>
                   {metadata.usedWww && (
-                    <p className="mt-2 text-sm text-yellow-600">Note: Used 'www' to fetch metadata.</p>
+                    <p className="mt-2 text-sm text-yellow-600">Note: Opted to use 'www' to fetch metadata.</p>
                   )}
                 </CardContent>
               </Card>
