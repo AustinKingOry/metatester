@@ -140,3 +140,13 @@ app.post('/fetch-metadata', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+fetch('https://metatester-backend.vercel.app/fetch-metadata', {
+  mode: 'no-cors'
+})
+.then(response => {
+  // handle response
+})
+.catch(error => {
+  console.error('Error:', error);
+});
