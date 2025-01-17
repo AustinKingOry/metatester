@@ -10,6 +10,7 @@ interface Metadata {
   description: string
   image: string
   favicon: string
+  usedWww?: boolean
 }
 
 const API_URL = 'http://localhost:3001/fetch-metadata'
@@ -152,6 +153,10 @@ const App: React.FC = () => {
                   <p className="mt-2 text-gray-600">{metadata.description}</p>
                   {metadata.image && (
                     <img src={metadata.image || "/placeholder.svg"} alt="Preview" className="mt-4 rounded-md max-w-full h-auto" />
+                  )}
+                  <p className="mt-2 text-sm text-yellow-600">Note: If you are testing a site, try using the <code className="text-blue-600">www</code> prefix.</p>
+                  {metadata.usedWww && (
+                    <p className="mt-2 text-sm text-yellow-600">Note: Used 'www' to fetch metadata.</p>
                   )}
                 </CardContent>
               </Card>

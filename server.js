@@ -38,36 +38,51 @@ function resolveRelativeUrl(baseUrl, relativePath) {
 }
 
 async function fetchMetadata(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
+  const tryFetch = async (urlToTry, usedWww) => {
+    return new Promise((resolve, reject) => {
+      https.get(urlToTry, (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          const $ = cheerio.load(data);
+          const metadata = {
+            title: $('meta[property="og:title"]').attr('content') || 
+                   $('meta[name="twitter:title"]').attr('content') || 
+                   $('title').text() || 
+                   'Unknown Title',
+            description: $('meta[property="og:description"]').attr('content') || 
+                         $('meta[name="twitter:description"]').attr('content') || 
+                         $('meta[name="description"]').attr('content') || 
+                         'No description available',
+            image: resolveRelativeUrl(urlToTry, $('meta[property="og:image"]').attr('content') || 
+                   $('meta[name="twitter:image"]').attr('content') || 
+                   ''),
+            favicon: resolveRelativeUrl(urlToTry, $('link[rel="icon"]').attr('href') || 
+                     $('link[rel="shortcut icon"]').attr('href') || 
+                     '/favicon.ico'),
+            usedWww: usedWww
+          };
+          resolve(metadata);
+        });
+      }).on('error', (err) => {
+        reject(err);
       });
-      res.on('end', () => {
-        const $ = cheerio.load(data);
-        const metadata = {
-          title: $('meta[property="og:title"]').attr('content') || 
-                 $('meta[name="twitter:title"]').attr('content') || 
-                 $('title').text() || 
-                 'Unknown Title',
-          description: $('meta[property="og:description"]').attr('content') || 
-                       $('meta[name="twitter:description"]').attr('content') || 
-                       $('meta[name="description"]').attr('content') || 
-                       'No description available',
-          image: resolveRelativeUrl(url, $('meta[property="og:image"]').attr('content') || 
-                 $('meta[name="twitter:image"]').attr('content') || 
-                 ''),
-          favicon: resolveRelativeUrl(url, $('link[rel="icon"]').attr('href') || 
-                   $('link[rel="shortcut icon"]').attr('href') || 
-                   '/favicon.ico')
-        };
-        resolve(metadata);
-      });
-    }).on('error', (err) => {
-      reject(err);
     });
-  });
+  };
+
+  try {
+    return await tryFetch(url, false);
+  } catch (error) {
+    console.error(`Failed to fetch metadata for ${url}. Trying with www...`);
+    const urlObj = new URL(url);
+    if (!urlObj.hostname.startsWith('www.')) {
+      const wwwUrl = `${urlObj.protocol}//www.${urlObj.hostname}${urlObj.pathname}${urlObj.search}`;
+      return await tryFetch(wwwUrl, true);
+    }
+    throw error;
+  }
 }
 
 const server = http.createServer(async (req, res) => {
