@@ -89,11 +89,7 @@ async function fetchMetadata(url) {
                 author: $('meta[name="author"]').attr('content') || '',
                 usedWww,
               };
-              let noMetadata = ((!$('meta[property="og:title"]').attr('content') ||
-              !$('meta[name="twitter:title"]').attr('content') ||
-              !$('title').text()) && (!$('meta[property="og:description"]').attr('content') ||
-              !$('meta[name="twitter:description"]').attr('content') ||
-              !$('meta[name="description"]').attr('content')));
+              let noMetadata = (metadata.title=="Unknown Title" || metadata.description=="No description available");
               if (noMetadata && !usedWww){
                 // console.log('No metadata found for ',urlToTry);
                 metadata.NO_METADATA = true;
@@ -108,7 +104,9 @@ async function fetchMetadata(url) {
       
 
 try {
-    const metadata = await tryFetch(url, false);
+    const urlObj = new URL(url);
+    let usingWww = urlObj.hostname.startsWith('www.');
+    const metadata = await tryFetch(url, usingWww);
     if (metadata.NO_METADATA && !metadata.usedWww){
         throw new Error('No metadata found');
     }
