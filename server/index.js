@@ -5,7 +5,11 @@ import * as cheerio from 'cheerio';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:5173';
+const ALLOWED_ORIGINS = [
+    'https://metatester.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173'
+];
 
 // Simple in-memory cache
 const cache = new Map();
@@ -89,10 +93,15 @@ async function fetchMetadata(url) {
 
 app.use(express.json());
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
+    const origin = req.headers.origin;
+    // Check if the origin is allowed
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+    }
+    next();
 });
 
 app.options('*', (req, res) => {
