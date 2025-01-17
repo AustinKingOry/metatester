@@ -13,7 +13,7 @@ interface Metadata {
   usedWww?: boolean
 }
 
-const API_URL = 'http://localhost:3001/fetch-metadata'
+const API_URL = `${import.meta.env.VITE_API_URL}/fetch-metadata'`;
 
 const App: React.FC = () => {
   const [url, setUrl] = useState('https://example.com')

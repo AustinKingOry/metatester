@@ -3,7 +3,7 @@ import https from 'https';
 import { URL } from 'url';
 import * as cheerio from 'cheerio'
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Simple in-memory cache
 const cache = new Map();
