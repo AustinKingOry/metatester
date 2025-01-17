@@ -37,6 +37,7 @@ const App: React.FC = () => {
         throw new Error('Failed to fetch metadata')
       }
       const data = await response.json();
+      console.log(data)
       setMetadata(data)
     } catch (err) {
         console.error(`Failed to fetch metadata: ${err}`)
