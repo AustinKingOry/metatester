@@ -4,6 +4,7 @@ import { URL } from 'url';
 import * as cheerio from 'cheerio'
 
 const PORT = process.env.PORT || 3001;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://metatester.vercel.app';
 
 // Simple in-memory cache
 const cache = new Map();
@@ -86,7 +87,7 @@ async function fetchMetadata(url) {
 }
 
 const server = http.createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
