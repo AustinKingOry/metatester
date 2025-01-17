@@ -1,7 +1,7 @@
 import http from 'http';
 import https from 'https';
 import { URL } from 'url';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio'
 
 const PORT = 3001;
 
