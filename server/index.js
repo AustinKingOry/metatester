@@ -1,10 +1,11 @@
-import http from 'http';
+import express from 'express';
 import https from 'https';
 import { URL } from 'url';
-import * as cheerio from 'cheerio'
+import * as cheerio from 'cheerio';
 
+const app = express();
 const PORT = process.env.PORT || 3001;
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://metatester.vercel.app';
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:5173';
 
 // Simple in-memory cache
 const cache = new Map();
@@ -86,67 +87,47 @@ async function fetchMetadata(url) {
   }
 }
 
-const server = http.createServer(async (req, res) => {
+app.use(express.json());
+app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
+app.options('*', (req, res) => {
+  res.sendStatus(204);
+});
+
+app.delete('/clear-cache', (req, res) => {
+  cache.clear();
+  res.json({ message: 'Cache cleared successfully' });
+});
+
+app.post('/fetch-metadata', async (req, res) => {
+  const { url } = req.body;
+  if (!validateUrl(url)) {
+    return res.status(400).json({ error: 'Invalid URL' });
   }
 
-  if (req.method === 'DELETE' && req.url === '/clear-cache') {
-    cache.clear();
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Cache cleared successfully' }));
-    return;
+  if (cache.has(url)) {
+    const { metadata, timestamp } = cache.get(url);
+    if (Date.now() - timestamp < CACHE_TTL) {
+      return res.json(metadata);
+    }
   }
 
-  if (req.method === 'POST' && req.url === '/fetch-metadata') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', async () => {
-      try {
-        const { url } = JSON.parse(body);
-        if (!validateUrl(url)) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid URL' }));
-          return;
-        }
-
-        // Check cache
-        if (cache.has(url)) {
-          const { metadata, timestamp } = cache.get(url);
-          if (Date.now() - timestamp < CACHE_TTL) {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(metadata));
-            return;
-          }
-        }
-
+  try {
         const metadata = await fetchMetadata(url);
         
         // Update cache
-        cache.set(url, { metadata, timestamp: Date.now() });
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(metadata));
-      } catch (error) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Failed to fetch metadata' }));
-      }
-    });
-  } else {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Not Found' }));
+    cache.set(url, { metadata, timestamp: Date.now() });
+    res.json(metadata);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch metadata' });
   }
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-

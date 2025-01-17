@@ -13,7 +13,7 @@ interface Metadata {
   usedWww?: boolean
 }
 
-const API_URL = `${import.meta.env.VITE_API_URL}/fetch-metadata'`;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const App: React.FC = () => {
   const [url, setUrl] = useState('https://example.com')
@@ -26,7 +26,7 @@ const App: React.FC = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/fetch-metadata`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ const App: React.FC = () => {
   const clearCache = async () => {
     setClearingCache(true)
     try {
-      const response = await fetch('http://localhost:3001/clear-cache', {
+      const response = await fetch(`${API_URL}/clear-cache`, {
         method: 'DELETE',
       })
       if (!response.ok) {
