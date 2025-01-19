@@ -192,10 +192,15 @@ app.options('*', (req, res) => {
   res.sendStatus(204);
 });
 
-app.delete('/clear-cache', (req, res) => {
-  cache.clear();
-  res.json({ message: 'Cache cleared successfully' });
+app.get('/', (req, res) => {
+  res.json({ message: 'All systems normal. (Backend)' });
 });
+
+app.delete('/clear-cache', (req, res) => {
+    cache.clear();
+    res.json({ message: 'Cache cleared successfully' });
+  });
+  
 
 app.post('/fetch-metadata', async (req, res) => {
   const { url } = req.body;
