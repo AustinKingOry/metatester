@@ -62,7 +62,7 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                         Review your website's SEO performance and get insights to improve.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="mt-6 space-y-6 pb-6 overflow-y-scroll flex flex-col max-h-[90%] flex-1 pr-2">
+                <div className="mt-3 space-y-6 pb-6 overflow-y-scroll flex flex-col max-h-[90%] flex-1 pr-2">
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-lg font-medium">Overall Performance</CardTitle>
@@ -70,7 +70,7 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                         <CardContent>
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-3xl font-bold">{insights.percentagePerformance}%</span>
-                                <Badge variant={insights.percentagePerformance >= 70 ? "success" : "destructive"}>
+                                <Badge variant={insights.percentagePerformance >= 70 ? "default" : "destructive"}>
                                     {insights.percentagePerformance >= 70 ? "Good" : "Needs Improvement"}
                                 </Badge>
                             </div>
