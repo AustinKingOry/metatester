@@ -88,7 +88,6 @@ async function fetchMetadata(url) {
                     : "The favicon tag is missing. Add one for better  brand identification."
             }
         };
-        console.log("metadata:",metadata)
         return insights;
     }
     const tryFetch = async (urlToTry, usedWww) => {
