@@ -47,7 +47,12 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
     const getStatusColor = (isOptimal: boolean) => {
         return isOptimal ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
     };
-
+    const getProgressColor = (score: number) => {
+        if (score >= 80) return "*:bg-green-500";
+        if (score >= 60) return "*:bg-yellow-500";
+        if (score >= 40) return "*:bg-orange-500";
+        return "bg-red-500";
+    };
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -74,7 +79,7 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                                     {insights.percentagePerformance >= 70 ? "Good" : "Needs Improvement"}
                                 </Badge>
                             </div>
-                            <Progress value={insights.percentagePerformance} className="h-2" />
+                            <Progress value={insights.percentagePerformance} className={`h-2 ${getProgressColor(insights.percentagePerformance)}`} />
                         </CardContent>
                     </Card>
 

@@ -47,7 +47,7 @@ const App: React.FC = () => {
 
     function calculatePerformance(insights: Insights): number {
         let score = 0;
-        const maxScore = 4; // title, description, image, favicon
+        const maxScore = 4; // title, description, image
 
         // Title
         if (insights.title.isOptimal) score++;
