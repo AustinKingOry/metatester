@@ -146,7 +146,7 @@ const App: React.FC = () => {
             <div className="max-w-3xl mx-auto">
                 <Card className="bg-white shadow-xl rounded-lg overflow-hidden">
                     <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
-                        <div className="flex flex-row items-start gap-2 justify-between">
+                        <div className="flex flex-col sm:flex-row items-start gap-2 justify-between">
                             <div className="flex flex-col">
                                 <CardTitle className="text-2xl font-bold">Website Metadata Fetcher</CardTitle>
                                 <CardDescription className="text-blue-100">Analyze your website's SEO performance</CardDescription>
