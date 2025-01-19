@@ -19,11 +19,18 @@ interface SEOImage {
     isAvailable: boolean;
     feedback: string;
 }
+
+interface SEOFavicon {
+    value?: string;
+    isAvailable: boolean;
+    feedback: string;
+}
   
 interface Insights {
     title: SEOInsight;
     description: SEOInsight;
     image: SEOImage;
+    favicon: SEOFavicon;
     percentagePerformance: number;
 }
   
@@ -38,9 +45,9 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
 
     const getStatusIcon = (isOptimal: boolean) => {
         return isOptimal ? (
-            <CheckCircle className="w-6 h-6 text-green-500" />
+            <CheckCircle className="w-6 h-6 absolute -top-8 right-1 text-green-500" />
         ) : (
-            <XCircle className="w-6 h-6 text-red-500" />
+            <XCircle className="w-6 h-6 absolute -top-8 right-1 text-red-500" />
         );
     };
 
@@ -88,7 +95,7 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                             <CardTitle className="text-lg font-medium">Title</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between relative">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">
                                         Length: {insights.title.length} (Ideal: {insights.title.idealLength})
@@ -108,7 +115,7 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                             <CardTitle className="text-lg font-medium">Description</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between relative">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">
                                         Length: {insights.description.length} (Ideal: {insights.description.idealLength})
@@ -122,13 +129,34 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                             </div>
                         </CardContent>
                     </Card>
+                    
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg font-medium">Favicon</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-start justify-between relative">
+                                <div>
+                                    <p className="text-sm mb-2">{insights.favicon.value || 'No favicon available'}</p>
+                                    <Badge variant="outline" className={getStatusColor(insights.favicon.isAvailable)}>
+                                        {insights.favicon.feedback}
+                                    </Badge>
+                                </div>
+                                {insights.favicon.isAvailable ? (
+                                    <CheckCircle className="w-6 h-6 absolute -top-8 right-1 text-green-500" />
+                                ) : (
+                                    <AlertCircle className="w-6 h-6 absolute -top-8 right-1 text-yellow-500" />
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
 
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-lg font-medium">Image</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between relative">
                                 <div>
                                     <p className="text-sm mb-2">{insights.image.value || 'No image available'}</p>
                                     <Badge variant="outline" className={getStatusColor(insights.image.isAvailable)}>
@@ -136,9 +164,9 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
                                     </Badge>
                                 </div>
                                 {insights.image.isAvailable ? (
-                                    <CheckCircle className="w-6 h-6 text-green-500" />
+                                    <CheckCircle className="w-6 h-6 absolute -top-8 right-1 text-green-500" />
                                 ) : (
-                                    <AlertCircle className="w-6 h-6 text-yellow-500" />
+                                    <AlertCircle className="w-6 h-6 absolute -top-8 right-1 text-yellow-500" />
                                 )}
                             </div>
                         </CardContent>

@@ -28,10 +28,16 @@ interface SEOImage {
     isAvailable: boolean;
     feedback: string;
 }
+interface SEOFavicon {
+    value?: string;
+    isAvailable: boolean;
+    feedback: string;
+}
 interface Insights {
     title: SEOInsight;
     description: SEOInsight;
     image: SEOImage;
+    favicon: SEOFavicon;
     percentagePerformance: number;
 }
 
@@ -58,8 +64,8 @@ const App: React.FC = () => {
         // Image
         if (insights.image.isAvailable) score++;
 
-        // Favicon (assuming it's always available if metadata is fetched)
-        score++;
+        // Favicon 
+        if (insights.favicon.isAvailable) score++;
 
         return Math.round((score / maxScore) * 100);
     }

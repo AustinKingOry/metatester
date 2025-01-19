@@ -79,6 +79,13 @@ async function fetchMetadata(url) {
                 feedback: metadata.image
                     ? "An og:image tag is present, which is great for social sharing!"
                     : "The og:image tag is missing. Add one for better social media sharing."
+            },
+            favicon: {
+                value: metadata.favicon || "No favicon available",
+                isAvailable: Boolean(metadata.favicon),
+                feedback: metadata.favicon
+                    ? "An favicon tag is present, which is great for brand identification!"
+                    : "The favicon tag is missing. Add one for better  brand identification."
             }
         };
 
@@ -116,7 +123,7 @@ async function fetchMetadata(url) {
                   urlToTry,
                   $('link[rel="icon"]').attr('href') ||
                   $('link[rel="shortcut icon"]').attr('href') ||
-                  '/favicon.ico'
+                  'No favicon available'
                 ),
                 canonicalUrl: resolveRelativeUrl(
                   urlToTry,
