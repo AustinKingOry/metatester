@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Trash2 } from 'lucide-react'
+import SEOAnalysisDialog from "./components/SEOAnalysisDialog"
 
 interface Metadata {
   title: string
@@ -13,11 +14,31 @@ interface Metadata {
   usedWww?: boolean
 }
 
+interface SEOInsight {
+    value: string;
+    length: number;
+    idealLength: string;
+    isOptimal: boolean;
+    feedback: string;
+}
+  
+interface SEOImage {
+    value?: string;
+    isAvailable: boolean;
+    feedback: string;
+}
+interface Insights {
+    title: SEOInsight;
+    description: SEOInsight;
+    image: SEOImage;
+  }
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const App: React.FC = () => {
   const [url, setUrl] = useState('https://example.com')
-  const [metadata, setMetadata] = useState<Metadata | null>(null)
+  const [metadata, setMetadata] = useState<Metadata | null>(null);
+  const [insights, setInsights] = useState<Insights | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [clearingCache, setClearingCache] = useState(false)
@@ -37,7 +58,8 @@ const App: React.FC = () => {
         throw new Error('Failed to fetch metadata')
       }
       const data = await response.json();
-      setMetadata(data)
+      setMetadata(data.metadata);
+      setInsights(data.insights);
     } catch (err) {
         console.error(`Failed to fetch metadata: ${err}`)
         setError('Failed to fetch metadata. Please try again.')
@@ -158,6 +180,8 @@ const App: React.FC = () => {
                   {metadata.usedWww && (
                     <p className="mt-2 text-sm text-yellow-600">Note: Opted to use 'www' to fetch metadata.</p>
                   )}
+                  
+                <SEOAnalysisDialog insights={insights} />
                 </CardContent>
               </Card>
             )}

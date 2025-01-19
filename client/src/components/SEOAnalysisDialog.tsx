@@ -22,9 +22,12 @@ interface SEOInsight {
   }
   
   interface SEOAnalysisDialogProps {
-    insights: Insights;
+    insights: Insights | null;
   }
 const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
+    if (!insights) {
+      return null; // Or provide a fallback UI if needed
+    }
   return (
     <Dialog>
       {/* Trigger Button */}
