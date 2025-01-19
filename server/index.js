@@ -44,6 +44,46 @@ function resolveRelativeUrl(baseUrl, relativePath) {
 }
 
 async function fetchMetadata(url) {
+    // Function to analyze metadata quality
+    function analyzeMetadata(metadata) {
+        const insights = {
+            title: {
+                value: metadata.title,
+                length: metadata.title.length,
+                idealLength: "50-60 characters",
+                isOptimal: metadata.title.length >= 50 && metadata.title.length <= 60,
+                feedback: metadata.title.length === 0
+                    ? "The title tag is missing. Add one for better SEO."
+                    : metadata.title.length < 50
+                    ? "The title is too short; consider adding more detail."
+                    : metadata.title.length > 60
+                    ? "The title is too long; it might get truncated in search results."
+                    : "The title length is optimal."
+            },
+            description: {
+                value: metadata.description,
+                length: metadata.description.length,
+                idealLength: "150-160 characters",
+                isOptimal: metadata.description.length >= 150 && metadata.description.length <= 160,
+                feedback: metadata.description.length === 0
+                    ? "The meta description is missing. Add one for better SEO."
+                    : metadata.description.length < 150
+                    ? "The meta description is too short. Consider providing more detail."
+                    : metadata.description.length > 160
+                    ? "The meta description is too long; consider trimming it to avoid truncation."
+                    : "The description length is optimal."
+            },
+            image: {
+                value: metadata.image || "No image available",
+                isAvailable: Boolean(metadata.image),
+                feedback: metadata.image
+                    ? "An og:image tag is present, which is great for social sharing!"
+                    : "The og:image tag is missing. Add one for better social media sharing."
+            }
+        };
+
+        return insights;
+    }
     const tryFetch = async (urlToTry, usedWww) => {
         return new Promise((resolve, reject) => {
           https.get(urlToTry, (res) => {
@@ -94,7 +134,8 @@ async function fetchMetadata(url) {
                 // console.log('No metadata found for ',urlToTry);
                 metadata.NO_METADATA = true;
               }
-              resolve(metadata);
+              const insights = analyzeMetadata(metadata);
+              resolve({ metadata, insights });
             });
           }).on('error', (err) => {
             reject(err);
@@ -106,11 +147,11 @@ async function fetchMetadata(url) {
 try {
     const urlObj = new URL(url);
     let usingWww = urlObj.hostname.startsWith('www.');
-    const metadata = await tryFetch(url, usingWww);
-    if (metadata.NO_METADATA && !metadata.usedWww){
+    const metaResponse = await tryFetch(url, usingWww);
+    if (metaResponse.metadata.NO_METADATA && !metaResponse.metadata.usedWww){
         throw new Error('No metadata found');
     }
-    return metadata;
+    return metaResponse;
 } catch (error) {
         console.error(`Failed to fetch metadata for ${url}. Trying with www...`);
         const urlObj = new URL(url);
