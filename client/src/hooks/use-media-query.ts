@@ -1,7 +1,7 @@
 // src/hooks/use-media-query.ts
 import { useState, useEffect } from 'react';
 
-export function useMediaQuery(query) {
+export function useMediaQuery(query:string) {
   const [matches, setMatches] = useState(window.matchMedia(query).matches);
 
   useEffect(() => {
