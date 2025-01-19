@@ -20,6 +20,7 @@ interface SEOInsight {
     idealLength: string;
     isOptimal: boolean;
     feedback: string;
+    percentagePerformance: number;
 }
   
 interface SEOImage {
@@ -43,6 +44,24 @@ const App: React.FC = () => {
     const [error, setError] = useState<string | null>(null)
     const [clearingCache, setClearingCache] = useState(false);
       
+    function calculatePerformance(insights: Insights): number {
+        let score = 0;
+        const maxScore = 4; // title, description, image, favicon
+
+        // Title
+        if (insights.title.isOptimal) score++;
+
+        // Description
+        if (insights.description.isOptimal) score++;
+
+        // Image
+        if (insights.image.isAvailable) score++;
+
+        // Favicon (assuming it's always available if metadata is fetched)
+        score++;
+
+        return Math.round((score / maxScore) * 100);
+    }
     const fetchMetadata = useCallback(async (urlToFetch: string) => {
         setLoading(true)
         setError(null)
@@ -58,6 +77,8 @@ const App: React.FC = () => {
                 throw new Error('Failed to fetch metadata')
             }
             const data = await response.json();
+            const performanceScore = calculatePerformance(data.insights);
+            data.insights.percentagePerformance = performanceScore;
             setMetadata(data.metadata);
             setInsights(data.insights);
         } catch (err) {

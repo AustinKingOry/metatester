@@ -1,5 +1,9 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 interface SEOInsight {
     value: string;
@@ -7,6 +11,7 @@ interface SEOInsight {
     idealLength: string;
     isOptimal: boolean;
     feedback: string;
+    percentagePerformance: number;
 }
   
 interface SEOImage {
@@ -19,78 +24,125 @@ interface Insights {
     title: SEOInsight;
     description: SEOInsight;
     image: SEOImage;
+    percentagePerformance: number;
 }
   
 interface SEOAnalysisDialogProps {
     insights: Insights | null;
 }
+
 const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
     if (!insights) {
-      return null; // Or provide a fallback UI if needed
+      return null;
     }
+
+    const getStatusIcon = (isOptimal: boolean) => {
+        return isOptimal ? (
+            <CheckCircle className="w-6 h-6 text-green-500" />
+        ) : (
+            <XCircle className="w-6 h-6 text-red-500" />
+        );
+    };
+
+    const getStatusColor = (isOptimal: boolean) => {
+        return isOptimal ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+    };
+
     return (
         <Dialog>
-        {/* Trigger Button */}
-        <DialogTrigger className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            View SEO Insights
-        </DialogTrigger>
-
-            {/* Dialog Content */}
-            <DialogContent className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-lg w-full p-6 bg-white rounded-lg shadow-lg">
+            <DialogTrigger asChild>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    View SEO Insights
+                </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[625px] max-h-[80vh] flex flex-col pr-2">
                 <DialogHeader>
-                <DialogTitle className="text-xl font-bold mb-4">SEO Analysis</DialogTitle>
-                <DialogDescription>
-                    Make changes to your profile here. Click save when you're done.
-                </DialogDescription>
+                    <DialogTitle className="text-2xl font-bold">SEO Analysis</DialogTitle>
+                    <DialogDescription>
+                        Review your website's SEO performance and get insights to improve.
+                    </DialogDescription>
                 </DialogHeader>
+                <div className="mt-6 space-y-6 pb-6 overflow-y-scroll flex flex-col max-h-[90%] flex-1 pr-2">
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg font-medium">Overall Performance</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-3xl font-bold">{insights.percentagePerformance}%</span>
+                                <Badge variant={insights.percentagePerformance >= 70 ? "success" : "destructive"}>
+                                    {insights.percentagePerformance >= 70 ? "Good" : "Needs Improvement"}
+                                </Badge>
+                            </div>
+                            <Progress value={insights.percentagePerformance} className="h-2" />
+                        </CardContent>
+                    </Card>
 
-            {/* SEO Insights */}
-            <div className="space-y-4">
-                {/* Title Insight */}
-                <div>
-                <h4 className="font-semibold text-lg">Title:</h4>
-                <p className="text-gray-800">{insights.title.value}</p>
-                <p className="text-sm text-gray-500">
-                    Length: {insights.title.length} (Ideal: {insights.title.idealLength})
-                </p>
-                <p className={`text-sm ${insights.title.isOptimal ? 'text-green-600' : 'text-red-600'}`}>
-                    {insights.title.feedback}
-                </p>
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg font-medium">Title</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-500 mb-1">
+                                        Length: {insights.title.length} (Ideal: {insights.title.idealLength})
+                                    </p>
+                                    <p className="text-sm mb-2">{insights.title.value}</p>
+                                    <Badge variant="outline" className={getStatusColor(insights.title.isOptimal)}>
+                                        {insights.title.feedback}
+                                    </Badge>
+                                </div>
+                                {getStatusIcon(insights.title.isOptimal)}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg font-medium">Description</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-500 mb-1">
+                                        Length: {insights.description.length} (Ideal: {insights.description.idealLength})
+                                    </p>
+                                    <p className="text-sm mb-2">{insights.description.value}</p>
+                                    <Badge variant="outline" className={getStatusColor(insights.description.isOptimal)}>
+                                        {insights.description.feedback}
+                                    </Badge>
+                                </div>
+                                {getStatusIcon(insights.description.isOptimal)}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg font-medium">Image</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <p className="text-sm mb-2">{insights.image.value || 'No image available'}</p>
+                                    <Badge variant="outline" className={getStatusColor(insights.image.isAvailable)}>
+                                        {insights.image.feedback}
+                                    </Badge>
+                                </div>
+                                {insights.image.isAvailable ? (
+                                    <CheckCircle className="w-6 h-6 text-green-500" />
+                                ) : (
+                                    <AlertCircle className="w-6 h-6 text-yellow-500" />
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-
-                {/* Description Insight */}
-                <div>
-                <h4 className="font-semibold text-lg">Description:</h4>
-                <p className="text-gray-800">{insights.description.value}</p>
-                <p className="text-sm text-gray-500">
-                    Length: {insights.description.length} (Ideal: {insights.description.idealLength})
-                </p>
-                <p
-                    className={`text-sm ${
-                    insights.description.isOptimal ? 'text-green-600' : 'text-red-600'
-                    }`}
-                >
-                    {insights.description.feedback}
-                </p>
-                </div>
-
-                {/* Image Insight */}
-                <div>
-                <h4 className="font-semibold text-lg">Image:</h4>
-                <p className="text-gray-800">{insights.image.value || 'No image available'}</p>
-                <p
-                    className={`text-sm ${
-                    insights.image.isAvailable ? 'text-green-600' : 'text-red-600'
-                    }`}
-                >
-                    {insights.image.feedback}
-                </p>
-                </div>
-            </div>
-
             </DialogContent>
         </Dialog>
     );
 };
 
 export default SEOAnalysisDialog;
+
