@@ -146,8 +146,16 @@ const App: React.FC = () => {
             <div className="max-w-3xl mx-auto">
                 <Card className="bg-white shadow-xl rounded-lg overflow-hidden">
                     <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
-                        <CardTitle className="text-2xl font-bold">Website Metadata Fetcher</CardTitle>
-                        <CardDescription className="text-blue-100">Analyze your website's SEO performance</CardDescription>
+                        <div className="flex flex-row items-start gap-2 justify-between">
+                            <div className="flex flex-col">
+                                <CardTitle className="text-2xl font-bold">Website Metadata Fetcher</CardTitle>
+                                <CardDescription className="text-blue-100">Analyze your website's SEO performance</CardDescription>
+                            </div>
+                            {metadata && 
+                            <div className="">
+                                <SEOAnalysisDialog insights={insights} />
+                            </div>}
+                        </div>
                     </CardHeader>
                     <CardContent className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -206,10 +214,6 @@ const App: React.FC = () => {
                                     {metadata.usedWww && (
                                         <p className="text-sm text-yellow-600 mb-2">Note: Used 'www' prefix to fetch metadata.</p>
                                     )}
-                                    
-                                    <div className="mt-4">
-                                        <SEOAnalysisDialog insights={insights} />
-                                    </div>
                                 </CardContent>
                             </Card>
                         )}

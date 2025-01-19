@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Button } from "./ui/button";
 
 interface SEOInsight {
     value: string;
@@ -63,9 +64,9 @@ const SEOAnalysisDialog: React.FC<SEOAnalysisDialogProps> = ({ insights }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <Button variant={"secondary"}>
                     View SEO Insights
-                </button>
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[625px] max-h-[80vh] flex flex-col pr-2">
                 <DialogHeader>
