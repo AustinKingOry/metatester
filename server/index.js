@@ -74,21 +74,21 @@ async function fetchMetadata(url) {
                     : "The description length is optimal."
             },
             image: {
-                value: metadata.image || "No image available",
-                isAvailable: Boolean(metadata.image),
+                value: metadata.imageExists ? metadata.image : "No image available",
+                isAvailable: Boolean(metadata.imageExists),
                 feedback: metadata.image
                     ? "An og:image tag is present, which is great for social sharing!"
                     : "The og:image tag is missing. Add one for better social media sharing."
             },
             favicon: {
-                value: metadata.favicon || "No favicon available",
-                isAvailable: Boolean(metadata.favicon),
-                feedback: metadata.favicon
+                value: metadata.faviconExists ? metadata.favicon : "No favicon available",
+                isAvailable: Boolean(metadata.faviconExists),
+                feedback: metadata.faviconExists
                     ? "An favicon tag is present, which is great for brand identification!"
                     : "The favicon tag is missing. Add one for better  brand identification."
             }
         };
-
+        console.log("metadata:",metadata)
         return insights;
     }
     const tryFetch = async (urlToTry, usedWww) => {
@@ -119,12 +119,18 @@ async function fetchMetadata(url) {
                   $('meta[name="twitter:image"]').attr('content') ||
                   ''
                 ),
+                imageExists: $('meta[property="og:image"]').attr('content')!=undefined ||
+                $('meta[name="twitter:image"]').attr('content')!=undefined ||
+                false,
                 favicon: resolveRelativeUrl(
                   urlToTry,
                   $('link[rel="icon"]').attr('href') ||
                   $('link[rel="shortcut icon"]').attr('href') ||
                   'No favicon available'
                 ),
+                faviconExists: $('link[rel="icon"]').attr('href')!=undefined ||
+                $('link[rel="shortcut icon"]').attr('href')!=undefined ||
+                false,
                 canonicalUrl: resolveRelativeUrl(
                   urlToTry,
                   $('link[rel="canonical"]').attr('href') || ''

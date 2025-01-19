@@ -152,7 +152,7 @@ const App: React.FC = () => {
                                 <CardDescription className="text-blue-100">Analyze your website's SEO performance</CardDescription>
                             </div>
                             {metadata && 
-                            <div className="">
+                            <div>
                                 <SEOAnalysisDialog insights={insights} />
                             </div>}
                         </div>
